@@ -13,16 +13,32 @@ class Facial_Detection_Network(keras.models.Model):
         self.region_extraction_network = None
 
     def call(self, frame):
-        region_proposals = self.region_prop_network(frame)
-        regions = self.region_extraction_network(region_proposals)
-        for index, region in enumerate(regions):
+        region_proposals = self.region_prop_network.predict(frame)
+        for index, region in self.region_extraction_network(frame, region_proposals):
             if self.facial_classification_network.predict(region, batch_size=1)[0]:
                 regions.pop(index)
         return regions
 
 
-# class Region_Propositional_Network
-                
+class Region_Propositional_Network(keras.models.Model):
+    def __init__(self):
+        super().__init__()
+        
+    def call(self, frame):
+        pass
 
+class Region_Extraction_Network(keras.models.Model):
+    def __init__(self):
+        super().__init__()
+
+    def call(self, frame, region):
+        pass
+                
+class facial_Classification_Network(keras.models.Model):
+    def __init__(self):
+        super().__init__()
+
+    def call(self, face):
+        pass
 
         
