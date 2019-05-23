@@ -2,6 +2,8 @@ import cv2
 import face_recognition
 import numpy as np
 import threading
+import time
+
 
 def face_filters():
     global frame
@@ -11,9 +13,12 @@ def face_filters():
         faces = face_recognition.face_locations(image)
         print(faces)
         last_filter = gen_filters(image, faces)
+        time.sleep(1)
+
 
 def gen_filters(image, boxes):
     return image
+
 
 def combine_images(filter, img):
     return img
@@ -37,7 +42,7 @@ if __name__ == '__main__':
             img = frame
         cv2.imshow("video", img)
         key = cv2.waitKey(20)
-        if key == 27: # exit on ESC
+        if key == 27:  # exit on ESC
             break
     filters.join()
     cv2.destroyWindow("video")
