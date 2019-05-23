@@ -1,27 +1,46 @@
 import cv2
+import face_recognition
+import numpy as np
+import threading
 
-cv2.namedWindow("video")
-cv2.namedWindow("ir")
-video = cv2.VideoCapture(0)
-ir = cv2.VideoCapture(2)
+def face_filters():
+    global frame
+    global last_filter
+    while True:
+        image = np.array(frame)
+        faces = face_recognition.face_locations(image)
+        print(faces)
+        last_filter = gen_filters(image, faces)
 
-if video.isOpened(): # try to get the first frame
+def gen_filters(image, boxes):
+    return image
+
+def combine_images(filter, img):
+    return img
+
+
+if __name__ == '__main__':
+    cv2.namedWindow("video")
+    # cv2.namedWindow("ir")
+    video = cv2.VideoCapture(0)
+    ir = cv2.VideoCapture(2)
+    filters = threading.Thread(target=face_filters)
     rval, frame = video.read()
-else:
-    rval = False
-
-while rval:
-    cv2.imshow("ir", frame)
-    rval, frame = video.read()
-    cv2.imshow("video", frame)
-    rval, frame = ir.read()
-    key = cv2.waitKey(20)
-    if key == 27: # exit on ESC
-        break
-cv2.destroyWindow("video")
-cv2.destroyWindow("ir")
-
-def get_frame(camera=0):
-    pass
+    filters.start()
+    while rval:
+        # rval, frame = ir.read()
+        # cv2.imshow("ir", frame)
+        rval, frame = video.read()
+        if last_filter.any():
+            img = combine_images(last_filter, frame)
+        else:
+            img = frame
+        cv2.imshow("video", img)
+        key = cv2.waitKey(20)
+        if key == 27: # exit on ESC
+            break
+    filters.join()
+    cv2.destroyWindow("video")
+    # cv2.destroyWindow("ir")
 
 
